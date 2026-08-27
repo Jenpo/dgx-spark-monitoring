@@ -1,0 +1,63 @@
+# DGX Spark 集群监控栈 一键部署
+# 组件: Grafana + Prometheus + DCGM exporter + node_exporter
+#
+# 用法:
+#   1) (可选) 编辑 .env 配置节点地址
+#   2) ./install.sh        # 生成配置并启动
+#   3) 打开 http://localhost:3000  (账号 admin / admin)
+#
+# 拓扑:
+#   SPARK_NODE1_HOST = 运行监控栈的主机 (默认 127.0.0.1)
+#   SPARK_NODE2_HOST = 第二台 DGX Spark (默认禁用，留空)
+#   VLLM_HOST        = vLLM 推理服务地址 (默认禁用，留空)
+
+services:
+  grafana:
+    image: grafana/grafana:11.1.0
+    container_name: dgx-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:v2.53.0
+    container_name: dgx-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.runtime.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.retention.time=${PROM_RETENTION:-30d}'
+    restart: unless-stopped
+
+  # ---- node 1 exporter (本机) ----
+  dcgm-exporter-node1:
+    image: nvidia/dcgm-exporter:3.3.5-1.4.0-ubuntu22.04
+    container_name: dcgm-node1
+    runtime: nvidia
+    network_mode: host
+    restart: unless-stopped
+
+  node-exporter-node1:
+    image: prom/node-exporter:v1.8.1
+    container_name: node-exporter-node1
+    network_mode: host
+    pid: host
+    restart: unless-stopped
+
+volumes:
+  grafana-data:
+  prometheus-data:

@@ -1,0 +1,35 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # ---- DGX Spark node 1 (运行监控栈的主机) ----
+  - job_name: 'dcgm-spark-001'
+    static_configs:
+      - targets: ['${SPARK_NODE1_HOST}:9400']
+        labels:
+          node: spark-001
+  - job_name: 'node-spark-001'
+    static_configs:
+      - targets: ['${SPARK_NODE1_HOST}:9100']
+        labels:
+          node: spark-001
+
+  # ---- DGX Spark node 2 (第二台，可选) ----
+  - job_name: 'dcgm-spark-002'
+    static_configs:
+      - targets: ['${SPARK_NODE2_HOST}:9400']
+        labels:
+          node: spark-002
+  - job_name: 'node-spark-002'
+    static_configs:
+      - targets: ['${SPARK_NODE2_HOST}:9100']
+        labels:
+          node: spark-002
+
+  # ---- vLLM 推理服务指标 (可选) ----
+  - job_name: 'vllm'
+    static_configs:
+      - targets: ['${VLLM_HOST}:8888']
+        labels:
+          node: vllm

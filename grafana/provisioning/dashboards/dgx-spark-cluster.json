@@ -1,0 +1,480 @@
+{
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "unit": "watt"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "targets": [
+        {
+          "expr": "DCGM_FI_DEV_POWER_USAGE",
+          "legendFormat": "{{node}} GPU{{gpu}}",
+          "refId": "A"
+        }
+      ],
+      "title": "GPU 功耗 (W)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "max": 100,
+          "min": 0,
+          "unit": "percent"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 6,
+        "y": 0
+      },
+      "id": 2,
+      "targets": [
+        {
+          "expr": "DCGM_FI_DEV_GPU_UTIL",
+          "legendFormat": "{{node}} GPU{{gpu}}",
+          "refId": "A"
+        }
+      ],
+      "title": "GPU 利用率 (%)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "max": 100,
+          "min": 0,
+          "unit": "percent"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 12,
+        "y": 0
+      },
+      "id": 3,
+      "targets": [
+        {
+          "expr": "DCGM_FI_DEV_MEM_COPY_UTIL",
+          "legendFormat": "{{node}} memcopy",
+          "refId": "A"
+        },
+        {
+          "expr": "DCGM_FI_DEV_DEC_UTIL",
+          "legendFormat": "{{node}} decode",
+          "refId": "B"
+        },
+        {
+          "expr": "DCGM_FI_DEV_ENC_UTIL",
+          "legendFormat": "{{node}} encode",
+          "refId": "C"
+        }
+      ],
+      "title": "GPU 引擎利用率 (MEM拷贝/解码/编码 %)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 18,
+        "y": 0
+      },
+      "id": 4,
+      "targets": [
+        {
+          "expr": "DCGM_FI_DEV_GPU_TEMP",
+          "legendFormat": "{{node}} core",
+          "refId": "A"
+        },
+        {
+          "expr": "DCGM_FI_DEV_MEMORY_TEMP",
+          "legendFormat": "{{node}} mem",
+          "refId": "B"
+        }
+      ],
+      "title": "GPU 温度 (核心/显存 °C)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "unit": "hertz"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 0,
+        "y": 8
+      },
+      "id": 5,
+      "targets": [
+        {
+          "expr": "DCGM_FI_DEV_SM_CLOCK",
+          "legendFormat": "{{node}} GPU{{gpu}}",
+          "refId": "A"
+        }
+      ],
+      "title": "GPU SM 时钟 (MHz)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "unit": "milliwatthour"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 6,
+        "y": 8
+      },
+      "id": 6,
+      "targets": [
+        {
+          "expr": "DCGM_FI_DEV_TOTAL_ENERGY_CONSUMPTION",
+          "legendFormat": "{{node}} GPU{{gpu}}",
+          "refId": "A"
+        }
+      ],
+      "title": "GPU 累计能耗 (mWh)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 7,
+      "targets": [
+        {
+          "expr": "max by (node) (node_thermal_zone_temp)",
+          "legendFormat": "{{node}} max",
+          "refId": "A"
+        },
+        {
+          "expr": "avg by (node) (node_thermal_zone_temp)",
+          "legendFormat": "{{node}} avg",
+          "refId": "B"
+        }
+      ],
+      "title": "CPU 温度 (max/avg °C)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 16
+      },
+      "id": 8,
+      "targets": [
+        {
+          "expr": "100 - avg by (node) (rate(node_cpu_seconds_total{mode=\"idle\"}[1m])) * 100",
+          "legendFormat": "{{node}} CPU%",
+          "refId": "A"
+        },
+        {
+          "expr": "node_load1",
+          "legendFormat": "{{node}} load1",
+          "refId": "B"
+        },
+        {
+          "expr": "node_load5",
+          "legendFormat": "{{node}} load5",
+          "refId": "C"
+        },
+        {
+          "expr": "node_load15",
+          "legendFormat": "{{node}} load15",
+          "refId": "D"
+        }
+      ],
+      "title": "集群负载 (CPU使用率 / Load)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      },
+      "id": 9,
+      "targets": [
+        {
+          "expr": "node_memory_MemTotal_bytes",
+          "legendFormat": "{{node}} total",
+          "refId": "A"
+        },
+        {
+          "expr": "node_memory_MemAvailable_bytes",
+          "legendFormat": "{{node}} available",
+          "refId": "B"
+        },
+        {
+          "expr": "node_memory_SwapTotal_bytes - node_memory_SwapFree_bytes",
+          "legendFormat": "{{node}} swap used",
+          "refId": "C"
+        }
+      ],
+      "title": "内存 (可用/总量/Swap)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 24
+      },
+      "id": 10,
+      "targets": [
+        {
+          "expr": "node_filesystem_avail_bytes{mountpoint=\"/\"}",
+          "legendFormat": "{{node}} /",
+          "refId": "A"
+        }
+      ],
+      "title": "磁盘可用空间",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Bps"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 24
+      },
+      "id": 11,
+      "targets": [
+        {
+          "expr": "sum by (node) (rate(node_network_receive_bytes_total{device!=\"lo\"}[1m]))",
+          "legendFormat": "{{node}} rx",
+          "refId": "A"
+        },
+        {
+          "expr": "sum by (node) (rate(node_network_transmit_bytes_total{device!=\"lo\"}[1m]))",
+          "legendFormat": "{{node}} tx",
+          "refId": "B"
+        }
+      ],
+      "title": "网络收发带宽 (bytes/s)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "tokps"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 0,
+        "y": 32
+      },
+      "id": 12,
+      "targets": [
+        {
+          "expr": "rate(vllm:generation_tokens_total[1m])",
+          "legendFormat": "{{model_name}} gen",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(vllm:prompt_tokens_total[1m])",
+          "legendFormat": "{{model_name}} prompt",
+          "refId": "B"
+        }
+      ],
+      "title": "推理吞吐 (tok/s)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "unit": "percent"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 6,
+        "y": 32
+      },
+      "id": 13,
+      "targets": [
+        {
+          "expr": "vllm:kv_cache_usage_perc",
+          "legendFormat": "KV cache %",
+          "refId": "A"
+        },
+        {
+          "expr": "vllm:num_requests_running",
+          "legendFormat": "running",
+          "refId": "B"
+        },
+        {
+          "expr": "vllm:num_requests_waiting",
+          "legendFormat": "waiting",
+          "refId": "C"
+        }
+      ],
+      "title": "KV Cache 与请求队列",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 32
+      },
+      "id": 14,
+      "targets": [
+        {
+          "expr": "rate(vllm:inter_token_latency_seconds_sum[1m]) / rate(vllm:inter_token_latency_seconds_count[1m])",
+          "legendFormat": "{{model_name}} TPOT",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(vllm:request_prefill_time_seconds_sum[1m]) / rate(vllm:request_prefill_time_seconds_count[1m])",
+          "legendFormat": "{{model_name}} TTFT",
+          "refId": "B"
+        },
+        {
+          "expr": "rate(vllm:request_queue_time_seconds_sum[1m]) / rate(vllm:request_queue_time_seconds_count[1m])",
+          "legendFormat": "{{model_name}} queue",
+          "refId": "C"
+        }
+      ],
+      "title": "推理延迟 (TPOT/TTFT/排队 s)",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 39,
+  "tags": [
+    "dgx",
+    "spark",
+    "gb10"
+  ],
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timezone": "browser",
+  "title": "DGX Spark 集群监控",
+  "uid": "dgx-spark-dashboard",
+  "version": 3
+}
