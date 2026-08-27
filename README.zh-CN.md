@@ -24,6 +24,11 @@
 - **一键 Docker 安装** —— `./install.sh start` 即刻上线
 - **无厂商锁定** —— 标准 Prometheus + Grafana + DCGM exporter + node_exporter
 
+<p align="center">
+  <img src="docs/dashboard-preview.png" alt="DGX Spark 集群监控仪表盘预览" width="850">
+  <br/><i>DGX Spark 集群监控仪表盘 —— 14 个面板一键导入 Grafana</i>
+</p>
+
 ---
 
 ## ✨ 为什么要用

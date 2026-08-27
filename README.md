@@ -26,10 +26,10 @@ Monitor your **NVIDIA DGX Spark / GB10** cluster in minutes with a ready-made **
 - **One-command Docker install** — `./install.sh start` and you're live
 - **No vendor lock-in** — standard Prometheus + Grafana + DCGM exporter + node_exporter
 
-- 🎛️ **DCGM GPU telemetry** — power draw, utilization, memory/engine utilization, temperatures, SM clocks, cumulative energy
-- 🖥️ **Node system metrics** — CPU temp & load, memory, disk, network bandwidth
-- 🤖 **vLLM inference telemetry** — tokens/sec throughput, KV cache usage, request queue, TPOT/TTFT latency
-- 🌐 **Multi-node ready** — monitor two (or more) GB10 nodes from one dashboard
+<p align="center">
+  <img src="docs/dashboard-preview.png" alt="DGX Spark Cluster Monitoring Dashboard preview" width="850">
+  <br/><i>DGX Spark 集群监控 dashboard — 14 panels in one auto-imported Grafana view</i>
+</p>
 
 ---
 
