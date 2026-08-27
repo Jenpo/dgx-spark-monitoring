@@ -1,0 +1,33 @@
+# DGX Spark Monitoring
+
+> One-command NVIDIA DGX Spark (GB10) cluster GPU monitoring stack: Grafana + Prometheus + DCGM exporter + node_exporter + vLLM telemetry.
+
+## About
+
+- **Name:** DGX Spark Cluster Monitoring Stack
+- **Repo:** https://github.com/Jenpo/dgx-spark-monitoring
+- **License:** MIT
+- **Stack:** Grafana 11.1, Prometheus 2.53, NVIDIA DCGM exporter, node_exporter, vLLM metrics
+- **Install:** one command — `./install.sh start` (Docker Compose)
+- **Dashboard:** "DGX Spark 集群监控" — 14 pre-built panels, auto-imported
+- **Login:** Grafana http://localhost:3000 (admin / admin)
+
+## What it monitors
+
+- **GPU (DCGM):** power (W), utilization %, memcopy/decode/encode engine %, core & memory temp °C, SM clock (MHz), cumulative energy (mWh) — metrics `DCGM_FI_DEV_*`
+- **Node (node_exporter):** CPU temp & load, memory & swap, disk free, network bandwidth — metrics `node_*`
+- **Inference (vLLM):** tokens/sec throughput, KV cache usage %, request queue, TPOT/TTFT latency — metrics `vllm:*`
+
+## Key files
+
+- `docker-compose.yml` — full stack definition
+- `install.sh` — start / stop / restart / status / logs
+- `.env.example` — node & auth configuration
+- `grafana/provisioning/dashboards/dgx-spark-cluster.json` — the dashboard definition
+- `prometheus/prometheus.yml` — scrape template
+- `exporters/README.md` — node 2 exporter setup
+
+## Documentation
+
+- [English README](README.md)
+- [中文说明](README.zh-CN.md)

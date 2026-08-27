@@ -6,7 +6,25 @@
 ![Platform](https://img.shields.io/badge/platform-DGX%20Spark%20GB10-lightgrey)
 ![Docker](https://img.shields.io/badge/docker-compose-2496ED)
 
-Monitor your **NVIDIA DGX Spark / GB10** cluster in minutes with a ready-made Grafana dashboard. No manual panel wiring — pull the stack, run one script, and get:
+Monitor your **NVIDIA DGX Spark / GB10** cluster in minutes with a ready-made **open-source Grafana dashboard**. No manual panel wiring — pull the stack, run one script, and get:
+
+- 🎛️ **DCGM GPU telemetry** — power draw, utilization, memory/engine utilization, temperatures, SM clocks, cumulative energy
+- 🖥️ **Node system metrics** — CPU temp & load, memory, disk, network bandwidth
+- 🤖 **vLLM inference telemetry** — tokens/sec throughput, KV cache usage, request queue, TPOT/TTFT latency
+- 🌐 **Multi-node ready** — monitor two (or more) GB10 nodes from one dashboard
+
+---
+
+## 🎯 Features
+
+- **GPU temperature & thermal monitoring** — catch thermal throttling before it hurts inference (core + memory °C)
+- **GPU utilization & power monitoring** — DCGM-powered utilization, power draw, and SM clocks in real time
+- **LLM inference observability** — vLLM throughput (tok/s), KV cache usage, request queue, TPOT/TTFT latency
+- **Full node health** — CPU load, memory & swap, disk free space, network bandwidth
+- **Auto-imported dashboard** — 14 pre-built Grafana panels, zero manual configuration
+- **Multi-node cluster support** — monitor 1–N DGX Spark GB10 nodes from a single Prometheus + Grafana
+- **One-command Docker install** — `./install.sh start` and you're live
+- **No vendor lock-in** — standard Prometheus + Grafana + DCGM exporter + node_exporter
 
 - 🎛️ **DCGM GPU telemetry** — power draw, utilization, memory/engine utilization, temperatures, SM clocks, cumulative energy
 - 🖥️ **Node system metrics** — CPU temp & load, memory, disk, network bandwidth
@@ -132,6 +150,31 @@ If this saves you time, a coffee is appreciated:
 
 - [中文说明](README.zh-CN.md)
 - English (this file)
+
+---
+
+## ❓ FAQ
+
+**How do I monitor NVIDIA DGX Spark (GB10)?**
+Run the one-command Docker stack. It starts a DCGM exporter, node_exporter, Prometheus, and Grafana with a pre-built 14-panel dashboard. See [Quick Start](#-quick-start).
+
+**How do I check DGX Spark GPU temperature?**
+Open the dashboard and look at the **GPU 温度 (核心/显存 °C)** panel, powered by `DCGM_FI_DEV_GPU_TEMP` and `DCGM_FI_DEV_MEMORY_TEMP` metrics from the DCGM exporter.
+
+**How do I monitor vLLM inference metrics (throughput, latency)?**
+Set `VLLM_HOST` in `.env` and expose your vLLM Prometheus metrics port (default `8888`). The dashboard shows tokens/sec, KV cache usage, request queue, and TPOT/TTFT latency panels.
+
+**Which metrics does the dashboard show?**
+GPU power, utilization, engine (memcopy/decode/encode) utilization, core & memory temperature, SM clocks, cumulative energy — plus node CPU/memory/disk/network, and vLLM inference metrics. See [Dashboard Panels](#-dashboard-panels).
+
+**Can I monitor multiple DGX Spark nodes?**
+Yes. Set `SPARK_NODE2_HOST` (and more) in `.env`; the stack labels each node (`spark-001`, `spark-002`, …) so all GPUs appear in one dashboard.
+
+**Is this a fork of NVIDIA's official monitoring?**
+No. It's an independent open-source stack built on the standard DCGM exporter, node_exporter, Prometheus, and Grafana. Not affiliated with or endorsed by NVIDIA.
+
+**What is the default Grafana login?**
+`admin` / `admin`, changeable via `GRAFANA_ADMIN_USER` / `GRAFANA_ADMIN_PASSWORD` in `.env`.
 
 ---
 

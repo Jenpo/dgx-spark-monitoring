@@ -13,6 +13,19 @@
 
 ---
 
+## 🎯 功能特性
+
+- **GPU 温度与热监控** —— 在影响推理前发现过热降频（核心 + 显存 °C）
+- **GPU 利用率与功耗监控** —— 基于 DCGM 的利用率、功耗、SM 时钟实时监控
+- **LLM 推理可观测性** —— vLLM 吞吐（tok/s）、KV Cache 占用、请求队列、TPOT/TTFT 延迟
+- **完整节点健康** —— CPU 负载、内存与 Swap、磁盘可用空间、网络带宽
+- **仪表盘自动导入** —— 14 个预置 Grafana 面板，零手动配置
+- **多节点集群支持** —— 从一个 Prometheus + Grafana 监控 1–N 台 DGX Spark GB10 节点
+- **一键 Docker 安装** —— `./install.sh start` 即刻上线
+- **无厂商锁定** —— 标准 Prometheus + Grafana + DCGM exporter + node_exporter
+
+---
+
 ## ✨ 为什么要用
 
 DGX Spark（GB10）把强大的 AI 算力装进桌面。这个监控栈回答你真正关心的问题：
@@ -130,6 +143,31 @@ dgx-spark-monitoring/
 
 - [English](README.md)
 - 中文说明（本文件）
+
+---
+
+## ❓ 常见问题
+
+**如何监控 NVIDIA DGX Spark（GB10）？**
+一条命令启动 Docker 监控栈，自动拉起 DCGM exporter、node_exporter、Prometheus 和 Grafana，并预置 14 面板仪表盘。见[快速开始](#-快速开始)。
+
+**如何查看 DGX Spark 的 GPU 温度？**
+打开仪表盘看 **GPU 温度（核心/显存 °C）** 面板，由 DCGM exporter 的 `DCGM_FI_DEV_GPU_TEMP` 与 `DCGM_FI_DEV_MEMORY_TEMP` 指标驱动。
+
+**如何监控 vLLM 推理指标（吞吐/延迟）？**
+在 `.env` 设置 `VLLM_HOST` 并暴露 vLLM 的 Prometheus 指标端口（默认 `8888`），仪表盘会显示吞吐（tok/s）、KV Cache 占用、请求队列、TPOT/TTFT 延迟。
+
+**仪表盘展示哪些指标？**
+GPU 功耗、利用率、引擎（显存拷贝/解码/编码）利用率、核心与显存温度、SM 时钟、累计能耗，以及节点 CPU/内存/磁盘/网络和 vLLM 推理指标。见[仪表盘面板](#-仪表盘面板)。
+
+**可以监控多台 DGX Spark 节点吗？**
+可以。在 `.env` 设置 `SPARK_NODE2_HOST` 等，栈会自动给每台节点打标签（`spark-001`、`spark-002`…），所有 GPU 汇总在一个仪表盘。
+
+**这是 NVIDIA 官方监控的分支吗？**
+不是。这是基于标准 DCGM exporter、node_exporter、Prometheus 和 Grafana 的独立开源监控栈，与 NVIDIA 无关联，亦未经其背书。
+
+**Grafana 默认登录账号？**
+`admin` / `admin`，可通过 `.env` 的 `GRAFANA_ADMIN_USER` / `GRAFANA_ADMIN_PASSWORD` 修改。
 
 ---
 
