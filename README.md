@@ -25,7 +25,7 @@ A generic NVIDIA stack renders the same series on any x86 host. This dashboard i
 - **Two-node 200 Gb/s fabric serving.** Scaling to a second GB10 over the RoCE fabric and serving model weights with tensor parallelism are first-class DGX Spark workflows; the whole stack labels every node and every GPU so 1–N Spark maps cleanly onto one Prometheus.
 
 **Full reproducible argument & on-device verification commands:**
-[`docs/gb10-specific-panels.md`](docs/gb10-specific-panels.md)
+[`docs/gb10-specific-panels.md`](docs/gb10-specific-panels.md) · **Field notes on the cap & unified memory:** [`docs/engineering/gb10-thermal-unified-memory.md`](docs/engineering/gb10-thermal-unified-memory.md)
 
 ---
 
