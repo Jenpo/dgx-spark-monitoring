@@ -9,7 +9,7 @@
 - **License:** MIT
 - **Stack:** Grafana 11.1, Prometheus 2.53, NVIDIA DCGM exporter, node_exporter, vLLM metrics
 - **Install:** one command — `./install.sh start` (Docker Compose)
-- **Dashboard:** "DGX Spark 集群监控" — 14 pre-built panels, auto-imported
+- **Dashboard:** "DGX Spark 集群监控" — 17 pre-built panels (14 generic + 3 GB10-specific: unified 128GB CPU+GPU memory, SM clock vs 2200 MHz clock-cap, power-temperature co-plot), auto-imported
 - **Login:** Grafana http://localhost:3000 (admin / admin)
 
 ## What it monitors

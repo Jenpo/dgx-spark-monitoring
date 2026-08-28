@@ -12,6 +12,17 @@ Monitor your **NVIDIA DGX Spark / GB10** cluster in minutes with a ready-made **
 - 🖥️ **Node system metrics** — CPU temp & load, memory, disk, network bandwidth
 - 🤖 **vLLM inference telemetry** — tokens/sec throughput, KV cache usage, request queue, TPOT/TTFT latency
 - 🌐 **Multi-node ready** — monitor two (or more) GB10 nodes from one dashboard
+- 🔒 **GB10-specific telemetry** — unified 128 GB CPU+GPU memory, the 2200 MHz clock cap thermal practice, and GB10 power–temperature co-plotting
+
+---
+
+## ✨ Why GB10-specific? (not just “runs on a GB10”)
+
+A generic NVIDIA stack renders the same series on any x86 host. This dashboard is intentionally **specific to the GB10 Grace Blackwell superchip**:
+
+- **128 GB unified memory, not VRAM + host RAM.** DGX Spark has one shared LPDDR5X pool (Grace CPU + Blackwell GPU). The *GB10 统一内存* panel watches that single pool directly — there is no separate frame-buffer dimension to list (GB10 does not even expose `DCGM_FI_DEV_FB_*`, verified on-device).
+- **2200 MHz clock-cap thermal engineering.** GB10's recommended software clock cap (`nvidia-smi -i 0 -lgc 0,2200`, hardware max is 3003 MHz) is the single biggest lever for keeping a desktop supercomputer cool. The *SM Clock vs 2200 MHz 锁频* panel plots live clocks against both the cap and the silicon max, and *功耗–温度* co-plots power and temperature so the trade-off is visible in one view.
+- **Two-node 200 Gb/s fabric serving.** Scaling to a second GB10 over the RoCE fabric and serving model weights with tensor parallelism are first-class DGX Spark workflows; the whole stack labels every node and every GPU so 1–N Spark maps cleanly onto one Prometheus.
 
 ---
 
@@ -21,14 +32,30 @@ Monitor your **NVIDIA DGX Spark / GB10** cluster in minutes with a ready-made **
 - **GPU utilization & power monitoring** — DCGM-powered utilization, power draw, and SM clocks in real time
 - **LLM inference observability** — vLLM throughput (tok/s), KV cache usage, request queue, TPOT/TTFT latency
 - **Full node health** — CPU load, memory & swap, disk free space, network bandwidth
-- **Auto-imported dashboard** — 14 pre-built Grafana panels, zero manual configuration
+- **Auto-imported dashboard** — 17 pre-built Grafana panels (14 generic + 3 GB10-specific), zero manual configuration
 - **Multi-node cluster support** — monitor 1–N DGX Spark GB10 nodes from a single Prometheus + Grafana
 - **One-command Docker install** — `./install.sh start` and you're live
 - **No vendor lock-in** — standard Prometheus + Grafana + DCGM exporter + node_exporter
 
 <p align="center">
   <img src="docs/dashboard-preview.png" alt="DGX Spark Cluster Monitoring Dashboard preview" width="850">
-  <br/><i>DGX Spark 集群监控 dashboard — 14 panels in one auto-imported Grafana view</i>
+  <br/><i>DGX Spark 集群监控 dashboard — 17 panels in one auto-imported Grafana view</i>
+</p>
+
+#### GB10-specific panels (close-up)
+
+<p align="center">
+  <img src="docs/dashboard-gb10.png" alt="GB10-specific panels: unified memory, clock cap, power-temperature" width="850">
+  <br/><i>GB10 特有面板：统一内存 / 2200 MHz 锁频 / 功耗–温度联动（本图来自真实双机集群实采数据）</i>
+</p>
+
+#### General GPU / system / inference panels (close-up)
+
+<p align="center">
+  <img src="docs/dashboard-gpu.png" alt="GPU telemetry panels" width="850">
+  <img src="docs/dashboard-system.png" alt="Node system panels" width="850">
+  <img src="docs/dashboard-inference.png" alt="vLLM inference panels" width="850">
+  <br/><i>GPU 遥测 / 节点系统 / vLLM 推理 面板细节</i>
 </p>
 
 ---
@@ -71,7 +98,7 @@ cp .env.example .env   # set SPARK_NODE1_HOST / SPARK_NODE2_HOST / VLLM_HOST
 > docker run -d --network=host --pid=host --name node-exp2 prom/node-exporter:v1.8.1
 > ```
 
-That's it — the **"DGX Spark 集群监控"** dashboard auto-loads with 14 pre-built panels.
+That's it — the **"DGX Spark 集群监控"** dashboard auto-loads with 17 pre-built panels.
 
 ---
 
@@ -93,6 +120,9 @@ That's it — the **"DGX Spark 集群监控"** dashboard auto-loads with 14 pre-
 | Inference t/s | `vllm:*_tokens_total` |
 | KV Cache & Queue | `vllm:kv_cache_usage_perc` / `num_requests_*` |
 | Latency (TPOT/TTFT/queue) | `vllm:inter_token_latency` / `request_prefill` / `request_queue` |
+| **GB10 统一内存 (128GB CPU+GPU 共享)** | `node_memory_MemTotal/Available` — 一体池语义，无独立 FB |
+| **SM Clock vs GB10 2200 MHz 锁频** | `DCGM_FI_DEV_SM_CLOCK` + 2200 cap / 3003 max 参考线 |
+| **GB10 功耗–温度 (锁频热设计)** | `DCGM_FI_DEV_POWER_USAGE` × `DCGM_FI_DEV_GPU_TEMP` 双轴 |
 
 ---
 
@@ -122,7 +152,7 @@ dgx-spark-monitoring/
 ├── grafana/
 │   └── provisioning/                  # Auto datasource + dashboard import
 │       ├── datasources/datasource.yml
-│       └── dashboards/dgx-spark-cluster.json   # 14-panel dashboard
+│       └── dashboards/dgx-spark-cluster.json   # 17-panel dashboard (14 generic + 3 GB10-specific)
 ├── exporters/                         # Manual exporter setup for node 2
 └── donate/                            # WeChat & Alipay donation QR codes
 ```
@@ -156,7 +186,7 @@ If this saves you time, a coffee is appreciated:
 ## ❓ FAQ
 
 **How do I monitor NVIDIA DGX Spark (GB10)?**
-Run the one-command Docker stack. It starts a DCGM exporter, node_exporter, Prometheus, and Grafana with a pre-built 14-panel dashboard. See [Quick Start](#-quick-start).
+Run the one-command Docker stack. It starts a DCGM exporter, node_exporter, Prometheus, and Grafana with a pre-built 17-panel dashboard. See [Quick Start](#-quick-start).
 
 **How do I check DGX Spark GPU temperature?**
 Open the dashboard and look at the **GPU 温度 (核心/显存 °C)** panel, powered by `DCGM_FI_DEV_GPU_TEMP` and `DCGM_FI_DEV_MEMORY_TEMP` metrics from the DCGM exporter.

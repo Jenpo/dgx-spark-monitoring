@@ -460,6 +460,206 @@
       ],
       "title": "推理延迟 (TPOT/TTFT/排队 s)",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "GB10 特有：Grace CPU 与 Blackwell GPU 共享 128GB 统一内存（LPDDR5X），无独立 VRAM。node_memory 的 MemTotal 恒为 128GB，已用=CPU+GPU 共享部分。",
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "unit": "bytes"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 40
+      },
+      "id": 15,
+      "targets": [
+        {
+          "expr": "node_memory_MemTotal_bytes",
+          "legendFormat": "总量 (128GB 一体化)",
+          "refId": "A"
+        },
+        {
+          "expr": "node_memory_MemAvailable_bytes",
+          "legendFormat": "可用",
+          "refId": "B"
+        },
+        {
+          "expr": "node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes",
+          "legendFormat": "已用 (CPU+GPU 共享)",
+          "refId": "C"
+        }
+      ],
+      "title": "GB10 统一内存 (128GB CPU+GPU 共享)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "GB10 特有散热实践：长时间推理建议把 SM 时钟锁频到 2200 MHz（GB10 硬件上限 3003 MHz）。双机实测：锁频后峰温 -8~12°C、GPU rail 功耗约 -36%，decode 差异在噪声内，cold prefill 约慢 3.9%，综合性能代价约 1%。虚线为 2200 锁频目标与 3003 硬件上限。",
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "unit": "hertz",
+          "custom": {
+            "lineWidth": 1
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "2200 锁频目标"
+            },
+            "properties": [
+              {
+                "id": "custom.dashStyle",
+                "value": [
+                  10,
+                  10
+                ]
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "3003 硬件上限"
+            },
+            "properties": [
+              {
+                "id": "custom.dashStyle",
+                "value": [
+                  5,
+                  5
+                ]
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "gray",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 40
+      },
+      "id": 16,
+      "targets": [
+        {
+          "expr": "DCGM_FI_DEV_SM_CLOCK",
+          "legendFormat": "{{node}} GPU{{gpu}}",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "__expr__",
+            "uid": "__expr__"
+          },
+          "type": "math",
+          "expression": "2200",
+          "legendFormat": "2200 锁频目标",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "__expr__",
+            "uid": "__expr__"
+          },
+          "type": "math",
+          "expression": "3003",
+          "legendFormat": "3003 硬件上限",
+          "refId": "C"
+        }
+      ],
+      "title": "SM Clock vs GB10 2200 MHz 锁频",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "GB10 热设计观测：GPU 功耗(W) 与 温度(°C) 同图双轴联动，可直接评估 2200MHz 锁频的降温与省电 trade-off（左轴功耗、右轴温度）。",
+      "fieldConfig": {
+        "defaults": {
+          "min": 0
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "GPU 温度"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "celsius"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "GPU 功耗"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "watt"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 40
+      },
+      "id": 17,
+      "targets": [
+        {
+          "expr": "DCGM_FI_DEV_POWER_USAGE",
+          "legendFormat": "GPU 功耗",
+          "refId": "A"
+        },
+        {
+          "expr": "DCGM_FI_DEV_GPU_TEMP",
+          "legendFormat": "GPU 温度",
+          "refId": "B"
+        }
+      ],
+      "title": "GB10 功耗–温度 (锁频热设计)",
+      "type": "timeseries"
     }
   ],
   "refresh": "5s",

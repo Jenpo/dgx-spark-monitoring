@@ -10,6 +10,17 @@
 - 🖥️ **节点系统指标** —— CPU 温度与负载、内存、磁盘、网络带宽
 - 🤖 **vLLM 推理遥测** —— 吞吐（tok/s）、KV Cache 占用、请求队列、TPOT/TTFT 延迟
 - 🌐 **多节点就绪** —— 一个仪表盘监控两台（或多台）GB10 节点
+- 🔒 **GB10 特有遥测** —— 128GB CPU+GPU 统一内存、2200 MHz 锁频散热工程、GB10 功耗–温度联动
+
+---
+
+## ✨ 为什么是 GB10 特有（而非“能在 GB10 上跑”）
+
+通用 NVIDIA 监控栈在任何 x86 主机上渲染的都是同一套曲线。这个仪表盘有意做成 **GB10 专属**：
+
+- **128GB 统一内存，而非“显存 + 主机内存”。** DGX Spark 只有一个共享 LPDDR5X 内存池（Grace CPU + Blackwell GPU 共用）。*GB10 统一内存* 面板直接监控这个池子——GB10 根本不暴露独立的 `DCGM_FI_DEV_FB_*` 帧缓冲指标（已在真机上验证）。
+- **2200 MHz 锁频散热工程。** GB10 推荐的软件锁频（`nvidia-smi -i 0 -lgc 0,2200`，硬件上限 3003 MHz）是保持桌面超级计算机冷静的关键杠杆。*SM Clock vs 2200 锁频* 面板同时画出当前时钟、锁频线和硅上限线；*功耗–温度* 面板双轴联动，一眼看清华氏权衡。
+- **双机 200Gb/s 互联部署。** 通过 RoCE 织网扩展到第二台 GB10、张量并行推理是 DGX Spark 的一等公民用法；整个栈给每台节点/每块 GPU 打 tag，1–N 台 Spark 汇总到一个 Prometheus。
 
 ---
 
@@ -19,14 +30,30 @@
 - **GPU 利用率与功耗监控** —— 基于 DCGM 的利用率、功耗、SM 时钟实时监控
 - **LLM 推理可观测性** —— vLLM 吞吐（tok/s）、KV Cache 占用、请求队列、TPOT/TTFT 延迟
 - **完整节点健康** —— CPU 负载、内存与 Swap、磁盘可用空间、网络带宽
-- **仪表盘自动导入** —— 14 个预置 Grafana 面板，零手动配置
+- **仪表盘自动导入** —— 17 个预置 Grafana 面板（14 通用 + 3 GB10 特有），零手动配置
 - **多节点集群支持** —— 从一个 Prometheus + Grafana 监控 1–N 台 DGX Spark GB10 节点
 - **一键 Docker 安装** —— `./install.sh start` 即刻上线
 - **无厂商锁定** —— 标准 Prometheus + Grafana + DCGM exporter + node_exporter
 
 <p align="center">
   <img src="docs/dashboard-preview.png" alt="DGX Spark 集群监控仪表盘预览" width="850">
-  <br/><i>DGX Spark 集群监控仪表盘 —— 14 个面板一键导入 Grafana</i>
+  <br/><i>DGX Spark 集群监控仪表盘 —— 17 个面板一键导入 Grafana</i>
+</p>
+
+#### GB10 特有面板特写
+
+<p align="center">
+  <img src="docs/dashboard-gb10.png" alt="GB10 特有面板：统一内存 / 时钟锁频 / 功耗温度" width="850">
+  <br/><i>GB10 特有面板：统一内存 / 2200 MHz 锁频 / 功耗–温度联动（图为真实双机实采数据）</i>
+</p>
+
+#### GPU / 系统 / 推理面板特写
+
+<p align="center">
+  <img src="docs/dashboard-gpu.png" alt="GPU 遥测面板" width="850">
+  <img src="docs/dashboard-system.png" alt="节点系统面板" width="850">
+  <img src="docs/dashboard-inference.png" alt="vLLM 推理面板" width="850">
+  <br/><i>GPU 遥测 / 节点系统 / vLLM 推理 面板细节</i>
 </p>
 
 ---
@@ -69,7 +96,7 @@ cp .env.example .env   # 设置 SPARK_NODE1_HOST / SPARK_NODE2_HOST / VLLM_HOST
 > docker run -d --network=host --pid=host --name node-exp2 prom/node-exporter:v1.8.1
 > ```
 
-就这样 —— **"DGX Spark 集群监控"** 仪表盘会自动加载 14 个预置面板。
+就这样 —— **"DGX Spark 集群监控"** 仪表盘会自动加载 17 个预置面板。
 
 ---
 
@@ -91,6 +118,9 @@ cp .env.example .env   # 设置 SPARK_NODE1_HOST / SPARK_NODE2_HOST / VLLM_HOST
 | 推理吞吐 (tok/s) | `vllm:*_tokens_total` |
 | KV Cache & 请求队列 | `vllm:kv_cache_usage_perc` / `num_requests_*` |
 | 延迟（TPOT/TTFT/排队） | `vllm:inter_token_latency` / `request_prefill` / `request_queue` |
+| **GB10 统一内存 (128GB CPU+GPU 共享)** | `node_memory_MemTotal/Available` — 一体池语义，无独立 FB |
+| **SM Clock vs GB10 2200 MHz 锁频** | `DCGM_FI_DEV_SM_CLOCK` + 2200 cap / 3003 max 参考线 |
+| **GB10 功耗–温度 (锁频热设计)** | `DCGM_FI_DEV_POWER_USAGE` × `DCGM_FI_DEV_GPU_TEMP` 双轴 |
 
 ---
 
@@ -120,7 +150,7 @@ dgx-spark-monitoring/
 ├── grafana/
 │   └── provisioning/                  # 自动数据源 + 仪表盘导入
 │       ├── datasources/datasource.yml
-│       └── dashboards/dgx-spark-cluster.json   # 14 面板仪表盘
+│       └── dashboards/dgx-spark-cluster.json   # 17 面板仪表盘（14 通用 + 3 GB10 特有）
 ├── exporters/                         # node 2 手动部署 exporter
 └── donate/                            # 微信 & 支付宝打赏收款码
 ```
@@ -154,7 +184,7 @@ dgx-spark-monitoring/
 ## ❓ 常见问题
 
 **如何监控 NVIDIA DGX Spark（GB10）？**
-一条命令启动 Docker 监控栈，自动拉起 DCGM exporter、node_exporter、Prometheus 和 Grafana，并预置 14 面板仪表盘。见[快速开始](#-快速开始)。
+一条命令启动 Docker 监控栈，自动拉起 DCGM exporter、node_exporter、Prometheus 和 Grafana，并预置 17 面板仪表盘。见[快速开始](#-快速开始)。
 
 **如何查看 DGX Spark 的 GPU 温度？**
 打开仪表盘看 **GPU 温度（核心/显存 °C）** 面板，由 DCGM exporter 的 `DCGM_FI_DEV_GPU_TEMP` 与 `DCGM_FI_DEV_MEMORY_TEMP` 指标驱动。
