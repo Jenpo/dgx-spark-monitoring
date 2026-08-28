@@ -100,6 +100,9 @@ cp .env.example .env   # set SPARK_NODE1_HOST / SPARK_NODE2_HOST / VLLM_HOST
 
 That's it — the **"DGX Spark 集群监控"** dashboard auto-loads with 17 pre-built panels.
 
+> 💡 Grafana 10 asks you to change the default `admin/admin` password on first login. To keep the stock credentials for headless/scripted use, add this to your Grafana service:
+> `GF_SECURITY_DISABLE_INITIAL_ADMIN_PASSWORD_CHANGE=true`
+
 ---
 
 ## 📊 Dashboard Panels

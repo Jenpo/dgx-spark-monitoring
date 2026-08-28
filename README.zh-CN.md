@@ -98,6 +98,9 @@ cp .env.example .env   # 设置 SPARK_NODE1_HOST / SPARK_NODE2_HOST / VLLM_HOST
 
 就这样 —— **"DGX Spark 集群监控"** 仪表盘会自动加载 17 个预置面板。
 
+> 💡 Grafana 10 首次用默认 `admin/admin` 登录会强制要求改密。若希望保持默认账密（脚本/无人值守场景），给 Grafana 服务加环境变量即可跳过：
+> `GF_SECURITY_DISABLE_INITIAL_ADMIN_PASSWORD_CHANGE=true`
+
 ---
 
 ## 📊 仪表盘面板
