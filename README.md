@@ -24,6 +24,16 @@ A generic NVIDIA stack renders the same series on any x86 host. This dashboard i
 - **2200 MHz clock-cap thermal engineering.** GB10's recommended software clock cap (`nvidia-smi -i 0 -lgc 0,2200`, hardware max is 3003 MHz) is the single biggest lever for keeping a desktop supercomputer cool. The *SM Clock vs 2200 MHz 锁频* panel plots live clocks against both the cap and the silicon max, and *功耗–温度* co-plots power and temperature so the trade-off is visible in one view.
 - **Two-node 200 Gb/s fabric serving.** Scaling to a second GB10 over the RoCE fabric and serving model weights with tensor parallelism are first-class DGX Spark workflows; the whole stack labels every node and every GPU so 1–N Spark maps cleanly onto one Prometheus.
 
+**Full reproducible argument & on-device verification commands:**
+[`docs/gb10-specific-panels.md`](docs/gb10-specific-panels.md)
+
+---
+
+### 📋 Community / Listing
+
+- Accepted-review status: [bidual/awesome-dgx-spark #8](https://github.com/bidual/awesome-dgx-spark/pull/8) — pending maintainer review (open, mergeable).
+- Repo topics: `dgx-spark` · `gb10` · `grafana-dashboard` · `dcgm` · `vllm` · `prometheus` · `multi-node`
+
 ---
 
 ## 🎯 Features
