@@ -1,0 +1,50 @@
+# Try the full 17-panel dashboard WITHOUT any NVIDIA hardware.
+# All metrics are synthetic and clearly labelled MOCK (see tools/mock_gb10_metrics.py).
+#
+#   docker compose -f docker-compose.mock.yml up -d
+#   open http://localhost:3000   (admin / admin)
+#
+services:
+  mock-gb10:
+    image: python:3.12-alpine
+    container_name: dgx-mock-metrix
+    command: ["python", "/opt/tools/mock_gb10_metrics.py"]
+    volumes:
+      - ./tools:/opt/tools:ro
+    ports:
+      - "9100:9100"
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:v2.53.0
+    container_name: dgx-mock-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.mock.yml:/etc/prometheus/prometheus.yml:ro
+      - mock-prom-data:/prometheus
+    depends_on:
+      - mock-gb10
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:11.1.0
+    container_name: dgx-mock-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - mock-grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+volumes:
+  mock-prom-data:
+  mock-grafana-data:

@@ -79,6 +79,19 @@ DGX Spark（GB10）把强大的 AI 算力装进桌面。这个监控栈回答你
 
 ---
 
+## 👀 没有硬件也能先看效果（Mock）
+
+还没有 DGX Spark？一条命令拉起完整 17 面板（合成数据模拟双机 GB10，2200 MHz 锁频态势下，所有指标均标记 `MOCK`）：
+
+```bash
+docker compose -f docker-compose.mock.yml up -d
+open http://localhost:3000          # admin / admin
+```
+
+![预览](docs/dashboard-preview.png)
+
+---
+
 ## 🚀 快速开始
 
 **前置条件：** Docker + Docker Compose，NVIDIA Container Toolkit（供 DCGM exporter 使用），以及每台被监控节点上的对应环境。

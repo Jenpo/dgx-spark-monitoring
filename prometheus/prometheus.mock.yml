@@ -1,0 +1,9 @@
+# Mock-only scrape config: pulls the synthetic GB10 series from mock_gb10_metrics.py.
+global:
+  scrape_interval: 5s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: mock-gb10
+    static_configs:
+      - targets: ["mock-gb10:9100"]

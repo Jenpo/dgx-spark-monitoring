@@ -82,6 +82,19 @@ All shipped as a **pre-wired Grafana dashboard** (`DGX Spark 集群监控`) that
 
 ---
 
+## 👀 Try the dashboard without any hardware (mock)
+
+No DGX Spark yet? Spin up the full 17-panel dashboard with a **synthetic two-node GB10** in one command (all metrics clearly labelled `MOCK`, mimicking a 2200 MHz clock-capped pair):
+
+```bash
+docker compose -f docker-compose.mock.yml up -d
+open http://localhost:3000          # admin / admin
+```
+
+![Mock preview](docs/dashboard-preview.png)
+
+---
+
 ## 🚀 Quick Start
 
 **Prerequisites:** Docker + Docker Compose, NVIDIA Container Toolkit (for DCGM exporter), on each node you want to monitor.
