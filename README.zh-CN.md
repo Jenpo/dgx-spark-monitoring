@@ -22,7 +22,7 @@
 - **2200 MHz 锁频散热工程。** GB10 推荐的软件锁频（`nvidia-smi -i 0 -lgc 0,2200`，硬件上限 3003 MHz）是保持桌面超级计算机冷静的关键杠杆。*SM Clock vs 2200 锁频* 面板同时画出当前时钟、锁频线和硅上限线；*功耗–温度* 面板双轴联动，一眼看清华氏权衡。
 - **双机 200Gb/s 互联部署。** 通过 RoCE 织网扩展到第二台 GB10、张量并行推理是 DGX Spark 的一等公民用法；整个栈给每台节点/每块 GPU 打 tag，1–N 台 Spark 汇总到一个 Prometheus。
 
-**完整的可复算论证与真机验证命令：** [`docs/gb10-specific-panels.md`](docs/gb10-specific-panels.md)
+**完整的可复算论证与真机验证命令：** [`docs/gb10-specific-panels.md`](docs/gb10-specific-panels.md) · **锁频与统一内存实操笔记** [`docs/engineering/gb10-thermal-unified-memory.md`](docs/engineering/gb10-thermal-unified-memory.md)
 
 ---
 
